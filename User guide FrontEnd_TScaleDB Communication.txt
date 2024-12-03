@@ -11,6 +11,6 @@ Api must be created to facilitate connection by using psycopg2 library.
     ) 
 4.  Cnnect pandas to postgres
 5. Pandas library will be used to import Csv data as frame.
-6. Insert data into postgresql..
+6. Insert data into postgresl.
 
 
