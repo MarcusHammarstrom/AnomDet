@@ -1,0 +1,16 @@
+User guide on how front end connect to TimeScaleDB
+Api must be created to facilitate connection by using psycopg2 library.
+1.	 Install postgres and TimescaleDB as its extension.
+2.	Import libraries psycopg2 to connect to postgresql  and pandas to manipulate data  and sqlalchemy for sqin python environment. 
+3.	connection = psycopg2.connect( 
+        host="your-host",
+        database="your-database",
+        user="your-username",
+        password="your-password",
+        port=5432 
+    ) 
+4.  Cnnect pandas to postgres
+5. Pandas library will be used to import Csv data as frame.
+6. Insert data into postgresql.
+
+
