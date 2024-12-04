@@ -14,8 +14,8 @@ Note that the front-end loads data from the CSV file to create rows in the datab
 3. Front sends requests to the database via the created API and the response comes in json format.
 
 b. Inputs
-Front end will laod csv file and displayed them as raw data.
+Front end will laod the csv files and displayed them as raw data.
 
 c. Output
-Output will be displayed in json format.
+Output will be displayed in json formats.
 
