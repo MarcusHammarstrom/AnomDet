@@ -17,5 +17,5 @@ b. Inputs
 Front end will laod csv file and displayed them as raw data.
 
 c. Output
-Output will be displayed in json format
+Output will be displayed in json format.
 
