@@ -4,3 +4,4 @@ Database/anom_secrets/*
 **.pyc
 **__pycache__
 **pyenviro
+./Database/pyenviro

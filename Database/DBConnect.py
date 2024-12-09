@@ -96,3 +96,4 @@ class DB_Anomaly_Detector(db_interface):
             print(f"Data inserted successfully into {performance_metrics} table.")
         except Exception as e:
             print(f"Error inserting data: {e}")
+            
