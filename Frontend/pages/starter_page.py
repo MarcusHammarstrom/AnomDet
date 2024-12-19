@@ -1,11 +1,12 @@
 import os
-import requests
 import socket
+from backend_api import BackendAPI
 import json
 from dash import dcc, html, Input, Output, State, callback, ctx
 import dash
 from dash.dependencies import ALL
 
+active_datasets = []
 BACKEND_HOST = 'Backend'
 BACKEND_PORT = int(os.getenv('BACKEND_PORT'))
 
@@ -21,24 +22,22 @@ def send_socket_request(data):
         print(f"Socket error: {e}")
         return None
 
-def get_datasets():
-    data = json.dumps({"METHOD": "get-datasets"})
-    response = send_socket_request(data)
-    if "datasets" in response:
-        return response["datasets"]
-    return []
+api = BackendAPI(BACKEND_HOST, BACKEND_PORT)
 
-def get_models():
-    data = json.dumps({"METHOD": "get-models"})
-    response = send_socket_request(data)
-    if "models" in response:
-        return response["models"]
-    return []
+response_datasets = api.get_datasets()
+data = json.loads(response_datasets)
+datasets = data["datasets"]
+response_models = api.get_models()
+data = json.loads(response_models)
+models = data["models"]
+response_running = api.get_running()
+data = json.loads(response_running)
+running = data["running"]
 
-datasets = get_datasets()
-models = get_models()
+#running = handler.running()
+#if running != active_datasets:
+    #active_datasets = running
 
-active_datasets = []
 
 layout = html.Div([
     html.Div(
@@ -47,7 +46,8 @@ layout = html.Div([
         "textAlign": "center",
         "marginBottom": "30px",
         "color": "#ffffff",
-        "fontSize": "3.5rem"
+        "fontSize": "3.5rem",
+        "font-family": "Montserrat, sans-serif",
     }),
 
     html.Div([
@@ -163,13 +163,14 @@ html.Div(
             "margin": "auto",
             "boxShadow": "0 4px 10px rgb(0, 0, 0)",
             "textAlign": "center",
+            "marginTop": "10rem",
         }),
 
 ], style={
-    "backgroundColor": "#105E90",#5187a8
+    "backgroundColor": "#4C9ACC",#5187a8
     "padding": "40px",
     "minHeight": "100vh",
-
+    "margin": "auto",
 })
 
 
@@ -178,7 +179,6 @@ html.Div(
     Input("active-datasets-list", "children")
 )
 def toggle_active_jobs_section(children):
-    # Visa sektionen om det finns några aktiva jobb, annars dölj den
     if children:
         return {"display": "block", "marginTop": "30px"}
     return {"display": "none"}
