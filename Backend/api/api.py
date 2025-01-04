@@ -2,6 +2,7 @@ import os
 import socket
 import json
 from time import sleep
+from datetime import datetime
 
 class BackendAPI:
     # Constructor setting host adress and port for the the backend container
@@ -10,12 +11,13 @@ class BackendAPI:
         self.port = port
 
     # Sends a request to the backend to start a batch job
-    def run_batch(self, model: str, dataset: str, name: str, inj_params: dict=None) -> None:
+    def run_batch(self, model: str, dataset: str, name: str, debug=False, inj_params: dict=None) -> None:
         data = {
             "METHOD": "run-batch",
             "model": model,
             "dataset": dataset,
-            "name": name
+            "name": name,
+            "debug": debug
         }
         if inj_params:
             data["inj_params"] = inj_params
@@ -23,13 +25,14 @@ class BackendAPI:
         self.__send_data(data, response=False)
 
     # Sends a request to the backend to start a stream job
-    def run_stream(self, model: str,dataset: str, name: str, speedup: int, inj_params: dict=None) -> None:
+    def run_stream(self, model: str,dataset: str, name: str, speedup: int, debug=False, inj_params: dict=None) -> None:
         data = {
             "METHOD": "run-stream",
             "model": model,
             "dataset": dataset,
             "name": name,
-            "speedup": speedup
+            "speedup": speedup,
+            "debug" : debug
         }
         if inj_params:
             data["inj_params"] = inj_params
@@ -55,7 +58,7 @@ class BackendAPI:
         self.__send_data(data, response=False)
 
     # Requests each row of data of a running job from timestamp and forward
-    def get_data(self, timestamp: str, name: str) -> str:
+    def get_data(self, timestamp: datetime, name: str) -> str:
         data = {
             "METHOD": "get-data",
             "timestamp": timestamp,
@@ -128,6 +131,14 @@ class BackendAPI:
     def get_all_jobs(self) -> str:
         data = {
             "METHOD": "get-all-jobs"
+        }
+        return self.__send_data(data)
+
+    # Get columns of a running job
+    def get_columns(self, name: str) -> str:
+        data = {
+            "METHOD": "get-columns",
+            "name": name
         }
         return self.__send_data(data)
 
