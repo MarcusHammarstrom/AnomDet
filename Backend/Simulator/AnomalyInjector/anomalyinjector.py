@@ -69,7 +69,7 @@ class TimeSeriesAnomalyInjector:
                                 # Log data range and mean
                                 dl.debug_print(f"Data range: {data_range}, Mean: {mean}")
 
-                                num_anomalies = min(len(span_data), max(1, int(len(span_data) * percentage)))
+                                num_anomalies = min(len(span_data), max(1, int(len(span_data) * (percentage / 100))))
                                 anomaly_indices = self.rng.choice(span_data.index, size=num_anomalies, replace=False)
                                 dl.debug_print(f"Anomaly indices selected: {anomaly_indices}")
                                 dl.debug_print(f"Data before injection:\n{modified_data.loc[anomaly_indices, column]}")
@@ -84,7 +84,7 @@ class TimeSeriesAnomalyInjector:
                                         setting
                                     )
                                     # Mark anomaly flags
-                                    modified_data.loc[anomaly_indices, 'injected_anomaly'] = True
+                                    modified_data.loc[anomaly_indices, "injected_anomaly"] = True
                                     dl.debug_print(f"Data after injection:\n{modified_data.loc[anomaly_indices, column]}")
                                     dl.debug_print(f"Anomaly flags after injection:\n{modified_data.loc[anomaly_indices, 'injected_anomaly']}")
                                     

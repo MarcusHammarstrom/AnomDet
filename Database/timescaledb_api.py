@@ -27,11 +27,8 @@ class TimescaleDBAPI(DBInterface):
         # The first column is of type TIMESTAMPTZ NOT NULL and the rest are VARCHAR(50)
         columns[0] = f'\"{columns[0]}\" TIMESTAMPTZ NOT NULL'
         for i in range(1, length):
-            columns[i] = f'\"{columns[i]}\" VARCHAR(50)'
+            columns[i] = f'\"{columns[i]}\" TEXT'
         columns = columns + ["is_anomaly BOOLEAN"] + ["injected_anomaly BOOLEAN"]
-
-        for column in columns:
-            print(column)
 
         try: 
             conn = psycopg2.connect(self.connection_string)                         # Connect to the database
@@ -75,20 +72,19 @@ class TimescaleDBAPI(DBInterface):
                     float(x) if isinstance(x, (np.float64, np.float32)) else x
                     for x in row
                 ) for row in data.values]
-
                 execute_values(cur, query, values)
                 conn.commit()
             except Exception as e:
                 conn.rollback()
     
     # Reads each row of data in the table table_name that has a timestamp greater than or equal to time
-    def read_data(self, table_name: str, time: datetime) -> pd.DataFrame:
+    def read_data(self, time: datetime, table_name: str) -> pd.DataFrame:
         # Assuming the docker container is started, connect to the database
         try:
             conn = psycopg2.connect(self.connection_string)
             cursor = conn.cursor()
 
-            query = f'SELECT * FROM {table_name} WHERE timestamp >= \'{time}\';'
+            query = f'SELECT * FROM {table_name} WHERE timestamp >= \'{time}\' ORDER BY timestamp ASC;'
             cursor.execute(query)
 
             data = cursor.fetchall()
@@ -170,16 +166,19 @@ class TimescaleDBAPI(DBInterface):
             return columns
 
     # Updates rows of the table that have an anomaly detected
-    def update_anomalies(self, table_name: str, anomalies: pd.DataFrame) -> None:
-        arr = anomalies.to_numpy()
+    def update_anomalies(self, table_name: str, anomalies) -> None:
     
         try: 
             conn = psycopg2.connect(self.connection_string)
             cursor = conn.cursor()
 
-            query = f"UPDATE {table_name} SET is_anomaly = TRUE WHERE timestamp = %s;"
+            queries = []
 
-            execute_values(cur, query, arr)
+            for anomaly in anomalies:
+                queries.append(f"UPDATE {table_name} SET is_anomaly = TRUE WHERE timestamp = {anomaly};")
+
+
+            cursor.execute("".join(queries))
             conn.commit()
 
         except Exception as e:
