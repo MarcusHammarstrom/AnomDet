@@ -84,9 +84,9 @@ class TimescaleDBAPI(DBInterface):
             conn = psycopg2.connect(self.connection_string)
             cursor = conn.cursor()
             if to_time is not None:
-                query = f'SELECT * FROM {table_name} WHERE timestamp >= \'{from_time}\' AND timestamp <= \'{to_time}\' ORDER BY timestamp ASC;'
+                query = f'SELECT * FROM "{table_name}" WHERE timestamp >= \'{from_time}\' AND timestamp <= \'{to_time}\' ORDER BY timestamp ASC;'
             else:
-                query = f'SELECT * FROM {table_name} WHERE timestamp >= \'{from_time}\' ORDER BY timestamp ASC;'
+                query = f'SELECT * FROM "{table_name}" WHERE timestamp >= \'{from_time}\' ORDER BY timestamp ASC;'
 
             cursor.execute(query)
 
@@ -117,7 +117,7 @@ class TimescaleDBAPI(DBInterface):
             conn = psycopg2.connect(self.connection_string)
             cursor = conn.cursor()
 
-            cursor.execute(f'DROP TABLE {table_name};')
+            cursor.execute(f'DROP TABLE "{table_name}";')
             conn.commit()
         except Exception as error:
             print("Error: %s" % error)
@@ -178,7 +178,7 @@ class TimescaleDBAPI(DBInterface):
             queries = []
 
             for anomaly in anomalies:
-                queries.append(f"UPDATE {table_name} SET is_anomaly = TRUE WHERE timestamp = {anomaly};")
+                queries.append(f"UPDATE '{table_name}' SET is_anomaly = TRUE WHERE timestamp = {anomaly};")
 
 
             cursor.execute("".join(queries))
